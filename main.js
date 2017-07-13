@@ -46,7 +46,7 @@ $(document).ready( () => {
     });
     $.ajax({
       url: `https://www.reddit.com/user/${username}/comments.json`,
-      sucess: (data) => {
+      success: (data) => {
         let comments = data.data.children;
         comments = comments.slice(0, Math.min(comments.length, 25));
         sortedComments = comments.sort( (a,b) => {
