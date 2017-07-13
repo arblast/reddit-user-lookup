@@ -3,7 +3,15 @@ $(document).ready( () => {
   let commentData = [];
   let postTitle = $("#postTitle")[0];
   let commentTitle = $("#commentTitle")[0];
+  let postList = $("#postList")[0];
+  let commentList = $("#commentList")[0];
   $("#submit").click( () => {
+    while(postList.hasChildNodes()) {
+      postList.removeChild(postList.lastChild);
+    }
+    while(commentList.hasChildNodes()) {
+      commentList.removeChild(commentList.lastChild);
+    }
     let username = $("#username")[0].value;
     $.ajax({
       url: `https://www.reddit.com/user/${username}/submitted.json`,
@@ -19,6 +27,7 @@ $(document).ready( () => {
             return 0;
           }
         });
+        postTitle.innerHTML = `Showing top 25 posts by ${username}`
         for(let i=0; i<sortedPosts.length; i++) {
           let post = posts[i];
           let postInfo= document.createElement("li");
@@ -30,7 +39,7 @@ $(document).ready( () => {
           postLink.innerHTML = "Link";
           postLink.href = `${post.data.url}`;
           postInfo.append(postTitle, postScore, postLink);
-          $("#postList")[0].append(postInfo);
+          postList.append(postInfo);
         }
       },
       error: () => {postTitle.innerHTML = `No posts by "${username}"   found!`}
@@ -40,7 +49,6 @@ $(document).ready( () => {
       sucess: (data) => {
         let comments = data.data.children;
         comments = comments.slice(0, Math.min(comments.length, 25));
-        console.log(comments)
         sortedComments = comments.sort( (a,b) => {
           if(a.data.score < b.data.score) {
             return 1;
@@ -50,6 +58,7 @@ $(document).ready( () => {
             return 0;
           }
         });
+        commentTitle.innerHTML = `Showing top 25 comments by "${username}"`
         for(let i=0; i<sortedComments.length; i++) {
           let comment = comments[i];
           let commentInfo= document.createElement("li");
@@ -61,7 +70,7 @@ $(document).ready( () => {
           commentLink.innerHTML = "Link";
           commentLink.href = `${comment.data.link_url}`;
           commentInfo.append(commentBody, commentScore, commentLink);
-          $("#commentList")[0].append(commentInfo);
+          commentList.append(commentInfo);
         }
       },
       error: () => {commentTitle.innerHTML = `No comments by "${username}" found!` }
