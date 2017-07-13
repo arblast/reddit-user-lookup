@@ -33,35 +33,38 @@ $(document).ready( () => {
           $("#postList")[0].append(postInfo);
         }
       },
-      error: () => {postTitle.innerHTML = `No posts by "${username}" found!`}
+      error: () => {postTitle.innerHTML = `No posts by "${username}"   found!`}
     });
-    $.get(`https://www.reddit.com/user/${username}/comments.json`,
-    (data) => {
-      let comments = data.data.children;
-      comments = comments.slice(0, Math.min(comments.length, 25));
-      console.log(comments)
-      sortedComments = comments.sort( (a,b) => {
-        if(a.data.score < b.data.score) {
-          return 1;
-        } else if(a.data.score > b.data.score) {
-          return -1;
-        } else {
-          return 0;
+    $.ajax({
+      url: `https://www.reddit.com/user/${username}/comments.json`,
+      sucess: (data) => {
+        let comments = data.data.children;
+        comments = comments.slice(0, Math.min(comments.length, 25));
+        console.log(comments)
+        sortedComments = comments.sort( (a,b) => {
+          if(a.data.score < b.data.score) {
+            return 1;
+          } else if(a.data.score > b.data.score) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+        for(let i=0; i<sortedComments.length; i++) {
+          let comment = comments[i];
+          let commentInfo= document.createElement("li");
+          let commentBody = document.createElement("p");
+          commentBody.innerHTML = `${comment.data.body}`;
+          let commentScore = document.createElement("p");
+          commentScore.innerHTML = `Score: ${comment.data.score}`;
+          let commentLink = document.createElement("a");
+          commentLink.innerHTML = "Link";
+          commentLink.href = `${comment.data.link_url}`;
+          commentInfo.append(commentBody, commentScore, commentLink);
+          $("#commentList")[0].append(commentInfo);
         }
-      });
-      for(let i=0; i<sortedComments.length; i++) {
-        let comment = comments[i];
-        let commentInfo= document.createElement("li");
-        let commentBody = document.createElement("p");
-        commentBody.innerHTML = `${comment.data.body}`;
-        let commentScore = document.createElement("p");
-        commentScore.innerHTML = `Score: ${comment.data.score}`;
-        let commentLink = document.createElement("a");
-        commentLink.innerHTML = "Link";
-        commentLink.href = `${comment.data.link_url}`;
-        commentInfo.append(commentBody, commentScore, commentLink);
-        $("#commentList")[0].append(commentInfo);
-      }
+      },
+      error: () => {commentTitle.innerHTML = `No comments by "${username}" found!` }
     });
   });
 });
