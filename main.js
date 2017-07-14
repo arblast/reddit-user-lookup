@@ -27,7 +27,7 @@ $(document).ready( () => {
             return 0;
           }
         });
-        postTitle.innerHTML = `Showing top 25 posts by ${username}`
+        postTitle.innerHTML = `Showing top 25 posts by "${username}"`
         for(let i=0; i<sortedPosts.length; i++) {
           let post = posts[i];
           let postInfo= document.createElement("li");
